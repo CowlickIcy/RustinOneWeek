@@ -1,12 +1,16 @@
 #![allow(dead_code)]
 
+//
+
+use self::vector::Vector3;
+
 mod vector {
     use rand::Rng;
 
     pub struct Vector3 {
-        x: f64,
-        y: f64,
-        z: f64,
+        pub x: f64,
+        pub y: f64,
+        pub z: f64,
     }
 
     type Point = Vector3;
@@ -17,7 +21,7 @@ mod vector {
             Vector3 { x: x, y: y, z: z }
         }
 
-        pub fn unit_vectors(&self) -> Vector3{
+        pub fn unit_vectors(&self) -> Vector3 {
             Vector3
         }
 
@@ -62,5 +66,31 @@ mod vector {
                 z: self.x * other.y - self.y * other.x,
             }
         }
+    }
+}
+
+// ops redef
+
+impl Mul for Vector3 {
+    fn mul(self, rhs: f64) -> Self {
+        Self::new(self.x * rhs, self.y * rhs, self.z * rhs)
+    }
+}
+
+impl Div for Vector3 {
+    fn mul(self, rhs: f64) -> Self {
+        Self::new(self.x / rhs, self.y / rhs, self.z / rhs)
+    }
+}
+
+impl Add for Vector3 {
+    fn add(self, rhs: Self) -> Vector3 {
+        Self::new(self.x + rhs.x, self.y + rhs.y, self.z + rhs.z)
+    }
+}
+
+impl Sub for Vector3 {
+    fn sub(self, rhs: Self) -> Vector3 {
+        Self::new(self.x - rhs.x, self.y - rhs.y, self.z - rhs.z)
     }
 }
