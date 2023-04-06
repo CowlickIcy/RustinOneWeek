@@ -1,5 +1,5 @@
 [package]
-name = "RustinOneWeek"
+name = "rust_in_one_week"
 version = "0.1.0"
 edition = "2021"
 
