@@ -1,3 +1,3 @@
 pub use self::vector::*;
 
-mod vector;
+pub mod vector;
