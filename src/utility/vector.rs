@@ -10,14 +10,13 @@ pub struct Vector3 {
 }
 
 type Point = Vector3;
-type Color = Vector3;
 
 impl Vector3 {
     pub fn new(x: f64, y: f64, z: f64) -> Vector3 {
         Vector3 { x: x, y: y, z: z }
     }
 
-    pub fn unit_vectors(&self) -> Vector3 {
+    pub fn unit_vector(&self) -> Vector3 {
         Vector3::div_with_num(self, Vector3::length(self))
     }
 

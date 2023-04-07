@@ -1,5 +1,6 @@
 #![allow(dead_code)]
 mod utility;
+mod camera;
 pub use utility::vector::*;
 
 fn main() {
