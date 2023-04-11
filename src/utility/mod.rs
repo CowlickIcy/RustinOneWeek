@@ -9,3 +9,6 @@ pub mod color;
 pub mod macros;
 pub mod ray;
 pub mod aabb;
+
+pub type Point = Vector3;
+pub type Color = Vector3;

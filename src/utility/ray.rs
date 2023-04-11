@@ -1,6 +1,4 @@
-use super::vector::*;
-
-type Point3 = Vector3;
+use super::*;
 pub struct Ray {
     pub origin: Vector3,
     pub dir: Vector3,
@@ -15,7 +13,7 @@ impl Ray {
             time: time,
         }
     }
-    pub fn at(self, t: f64) -> Point3 {
+    pub fn at(self, t: f64) -> Point {
         let ret = self.dir.mul_with_num(t).add(self.origin);
         ret
     }

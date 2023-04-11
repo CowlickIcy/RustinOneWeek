@@ -11,9 +11,8 @@ pub struct Vector3 {
 
 type Point = Vector3;
 
-// 
+//
 impl Vector3 {
-
     pub fn new(x: f64, y: f64, z: f64) -> Vector3 {
         Vector3 { x, y, z }
     }

@@ -1,6 +1,4 @@
 use super::*;
-
-type Point = Vector3;
 pub struct Aabb {
     min: Point,
     max: Point,

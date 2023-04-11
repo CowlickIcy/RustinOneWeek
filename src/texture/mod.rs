@@ -3,12 +3,7 @@ pub use self::texture::*;
 
 pub mod texture;
 
-use crate::utility::macros::*;
-use crate::utility::vector::*;
-
-type Point = Vector3;
-type Color = Vector3;
-
+use crate::utility::{macros::*, *};
 
 pub struct Texture {
     color: Color,
