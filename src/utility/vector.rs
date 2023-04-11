@@ -2,7 +2,7 @@
 use rand::Rng;
 use std::ops;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct Vector3 {
     pub x: f64,
     pub y: f64,
@@ -11,9 +11,11 @@ pub struct Vector3 {
 
 type Point = Vector3;
 
+// 
 impl Vector3 {
+
     pub fn new(x: f64, y: f64, z: f64) -> Vector3 {
-        Vector3 { x: x, y: y, z: z }
+        Vector3 { x, y, z }
     }
 
     pub fn unit_vector(&self) -> Vector3 {
@@ -59,6 +61,14 @@ impl Vector3 {
         }
     }
 
+    pub fn sub(&self, rhs: Vector3) -> Vector3 {
+        Vector3 {
+            x: self.x - rhs.x,
+            y: self.y - rhs.y,
+            z: self.z - rhs.z,
+        }
+    }
+
     pub fn mul_with_num(&self, num: f64) -> Vector3 {
         Vector3 {
             x: self.x * num,
@@ -83,11 +93,11 @@ impl Vector3 {
         self.x * other.x + self.y * other.y + self.z * other.z
     }
 
-    pub fn cross(&self, other: &Vector3) -> Vector3 {
+    pub fn cross(&self, rhs: &Vector3) -> Vector3 {
         Vector3 {
-            x: self.y * other.z - self.z * other.y,
-            y: self.z * other.x - self.x * other.z,
-            z: self.x * other.y - self.y * other.x,
+            x: self.y * rhs.z - self.z * rhs.y,
+            y: self.z * rhs.x - self.x * rhs.z,
+            z: self.x * rhs.y - self.y * rhs.x,
         }
     }
 
@@ -140,21 +150,21 @@ impl Vector3 {
 // ops redef
 impl ops::Add for Vector3 {
     type Output = Vector3;
-    fn add(self, rhs: Self) -> Vector3 {
-        Self::new(self.x + rhs.x, self.y + rhs.y, self.z + rhs.z)
+    fn add(self, rhs: Vector3) -> Vector3 {
+        Vector3::new(self.x + rhs.x, self.y + rhs.y, self.z + rhs.z)
     }
 }
 
 impl ops::Sub for Vector3 {
     type Output = Vector3;
-    fn sub(self, rhs: Self) -> Vector3 {
-        Self::new(self.x - rhs.x, self.y - rhs.y, self.z - rhs.z)
+    fn sub(self, rhs: Vector3) -> Vector3 {
+        Vector3::new(self.x - rhs.x, self.y - rhs.y, self.z - rhs.z)
     }
 }
 
 impl ops::Neg for Vector3 {
     type Output = Vector3;
     fn neg(self) -> Vector3 {
-        Self::new(-self.x, -self.y, -self.z)
+        Vector3::new(-self.x, -self.y, -self.z)
     }
 }
