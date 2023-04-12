@@ -1,4 +1,5 @@
 use super::*;
+#[derive(Debug, Copy, Clone)]
 pub struct Aabb {
     min: Point,
     max: Point,

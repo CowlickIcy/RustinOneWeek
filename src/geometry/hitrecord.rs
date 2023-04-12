@@ -1,5 +1,6 @@
 use super::*;
 
+#[derive(Clone)]
 pub struct HitRecord {
     pub p: Point,
     pub normal: Vector3,
@@ -34,7 +35,11 @@ impl HitRecord {
         HitRecord {
             p: Point::new(0.0, 0.0, 0.0),
             normal: Vector3::new(0.0, 0.0, 0.0),
-            mat: Box::new(dyn Material)
+            mat: Box::new(BaseMaterial::new(0)),
+            t: 0.0,
+            u:0.0,
+            v:0.0,
+            front_face: true,
         }
     }
     pub fn set_face_normal(&mut self, r: &Ray, outward_normal: &Vector3) {
