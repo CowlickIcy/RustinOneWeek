@@ -14,15 +14,3 @@ pub trait Texture {
 pub struct BaseTexture {
     color: Color,
 }
-
-impl BaseTexture {
-    pub fn new(color: Color) -> BaseTexture {
-        BaseTexture { color }
-    }
-}
-
-impl Texture for BaseTexture {
-    fn get_color(&self, u: f64, v: f64, p: &Point) -> Color {
-        self.color
-    }
-}

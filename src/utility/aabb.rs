@@ -1,21 +1,13 @@
 use super::*;
 #[derive(Debug, Copy, Clone)]
 pub struct Aabb {
-    min: Point,
-    max: Point,
+    pub min: Point,
+    pub max: Point,
 }
 
 impl Aabb {
     pub fn new(min: Point, max: Point) -> Aabb {
         Aabb { min, max }
-    }
-
-    pub fn get_min(&self) -> Point {
-        self.min
-    }
-
-    pub fn get_max(&self) -> Point {
-        self.max
     }
 
     pub fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> bool {
@@ -32,21 +24,17 @@ impl Aabb {
     }
 
     pub fn surrounding_box(box0: &Aabb, box1: &Aabb) -> Aabb {
-        Aabb {
-            min: Vector3 {
-                e: [
-                    f64::min(box0.get_min().x(), box1.get_min().x()),
-                    f64::min(box0.get_min().y(), box1.get_min().y()),
-                    f64::min(box0.get_min().z(), box1.get_min().z()),
-                ],
-            },
-            max: Vector3 {
-                e: [
-                    f64::max(box0.get_max().x(), box1.get_max().x()),
-                    f64::max(box0.get_max().y(), box1.get_max().y()),
-                    f64::max(box0.get_max().z(), box1.get_max().z()),
-                ],
-            },
-        }
+        let min = Vector3::new(
+            f64::min(box0.min.x(), box1.min.x()),
+            f64::min(box0.min.y(), box1.min.y()),
+            f64::min(box0.min.z(), box1.min.z()),
+        );
+
+        let max = Vector3::new(
+            f64::max(box0.max.x(), box1.max.x()),
+            f64::max(box0.max.y(), box1.max.y()),
+            f64::max(box0.max.z(), box1.max.z()),
+        );
+        Aabb { min, max }
     }
 }

@@ -53,8 +53,8 @@ impl Vector3 {
     }
 
     pub fn near_zero(self) -> bool {
-        const e: f64 = 1e-8;
-        f64::abs(self[0]) < e && f64::abs(self[1]) < e && f64::abs(self[2]) < e
+        const E: f64 = 1e-8;
+        f64::abs(self[0]) < E && f64::abs(self[1]) < E && f64::abs(self[2]) < E
     }
 
     pub fn random(min: f64, max: f64) -> Vector3 {

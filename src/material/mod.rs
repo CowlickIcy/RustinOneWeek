@@ -2,24 +2,10 @@ use self::material::*;
 
 pub mod material;
 
-use crate::utility::*;
+use crate::{utility::*, geometry::HitRecord};
 
-#[derive(Clone)]
-pub struct BaseMaterial {
-    id: u32,
-}
-impl BaseMaterial {
-    pub fn new(id: u32) -> BaseMaterial {
-        BaseMaterial { id }
-    }
-}
-pub trait Material {
+pub trait Material: Sync {
     fn emitted(&self, u: f64, v: f64, p: &Point) -> Color;
-    // fn scatter(r_in: &Ray, )
-}
+    fn scatter(&self, r_in: &Ray, rec: &HitRecord, attenuation: Color, scattered: Color) -> bool;
 
-impl Material for BaseMaterial {
-    fn emitted(&self, u: f64, v: f64, p: &Point) -> Color {
-        Color::new(0.0, 0.0, 0.0)
-    }
 }

@@ -1,4 +1,4 @@
-#![allow(unused_variables)]
+#![allow(unused_variables, unused_assignments)]
 pub use super::vector::*;
 pub use super::macros::*;
 

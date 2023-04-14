@@ -1,40 +1,34 @@
 use super::*;
 
-pub struct Translate {
-    pub hptr: Box<dyn Hittable>,
-    pub offset: Vector3,
+#[derive(Debug, Clone)]
+pub struct Translate<H: Hittable> {
+    hptr: H,
+    offset: Vector3,
 }
-impl Translate {
-    pub fn new(hptr: Box<dyn Hittable>, offset: Vector3) -> Translate {
-        Translate {
-            hptr: hptr,
-            offset: offset,
-        }
+impl<H: Hittable> Translate<H> {
+    pub fn new(hptr: H, offset: Vector3) -> Translate<H> {
+        Translate { hptr, offset }
     }
 }
 
-impl Hittable for Translate {
-    fn hit(&self, r: &Ray, t_min: f64, t_max: f64, rec: &mut HitRecord) -> bool {
+impl<H: Hittable> Hittable for Translate<H> {
+    fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
         let moved_r = Ray::new(r.origin() - self.offset, r.dir(), r.time());
-        if self.hptr.hit(&moved_r, t_min, t_max, rec) {
-            return false;
-        }
-
-        rec.p = rec.p + self.offset;
-        let normal = rec.normal;
-        rec.set_face_normal(&moved_r, &normal);
-        true
+        self.hptr
+            .hit(&moved_r, t_min, t_max)
+            .map(|mut hit: HitRecord| {
+                hit.p += self.offset;
+                hit
+            })
     }
 
-    fn bounding_box(&self, time0: f64, time1: f64, output_box: &mut Aabb) -> bool {
-        if !self.hptr.bounding_box(time0, time1, output_box) {
-            return false;
-        }
-
-        *output_box = Aabb::new(
-            output_box.get_min() + self.offset,
-            output_box.get_max() + self.offset,
-        );
-        true
+    fn bounding_box(&self, time0: f64, time1: f64) -> Option<Aabb> {
+        self.hptr.bounding_box(time0, time1).map(|mut aabb: Aabb| {
+            aabb.min += self.offset;
+            aabb.max += self.offset;
+            aabb
+        })
     }
 }
+
+    
