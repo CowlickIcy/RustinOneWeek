@@ -7,7 +7,7 @@ pub struct Aabb {
 
 impl Aabb {
     pub fn new(min: Point, max: Point) -> Aabb {
-        Aabb { min: min, max: max }
+        Aabb { min, max }
     }
 
     pub fn get_min(&self) -> Point {
@@ -19,54 +19,33 @@ impl Aabb {
     }
 
     pub fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> bool {
-        let mut t0 = f64::min(
-            (self.get_min().x - r.origin.x) / r.dir.x,
-            (self.get_max().x - r.origin.x) / r.dir.x,
-        );
-        let mut t1 = f64::max(
-            (self.get_min().x - r.origin.x) / r.dir.x,
-            (self.get_max().x - r.origin.x) / r.dir.x,
-        );
-        let mut t_min = f64::max(t0, t_min);
-        let mut t_max = f64::min(t1, t_max);
-        t0 = f64::min(
-            (self.get_min().y - r.origin.y) / r.dir.y,
-            (self.get_max().y - r.origin.y) / r.dir.y,
-        );
-        t1 = f64::max(
-            (self.get_min().y - r.origin.y) / r.dir.y,
-            (self.get_max().y - r.origin.y) / r.dir.y,
-        );
-        t_min = f64::max(t0, t_min);
-        t_max = f64::min(t1, t_max);
-        t0 = f64::min(
-            (self.get_min().z - r.origin.z) / r.dir.z,
-            (self.get_max().z - r.origin.z) / r.dir.z,
-        );
-        t1 = f64::max(
-            (self.get_min().z - r.origin.z) / r.dir.z,
-            (self.get_max().z - r.origin.z) / r.dir.z,
-        );
-        t_min = f64::max(t0, t_min);
-        t_max = f64::min(t1, t_max);
-        if t_max <= t_min {
-            return false;
-        } else {
-            return true;
+        for iter in 0..=2 {
+            let inv_d = 1.0 / r.dir()[iter];
+            let t0 = (self.min[iter] - r.origin()[iter]) * inv_d;
+            let t1 = (self.max[iter] - r.origin()[iter]) * inv_d;
+            let (t0, t1) = if inv_d < 0.0 { (t1, t0) } else { (t0, t1) };
+            if t_max.min(t0) <= t_min.max(t1) {
+                return false;
+            }
         }
+        true
     }
 
     pub fn surrounding_box(box0: &Aabb, box1: &Aabb) -> Aabb {
         Aabb {
             min: Vector3 {
-                x: f64::min(box0.get_min().x, box1.get_min().x),
-                y: f64::min(box0.get_min().y, box1.get_min().y),
-                z: f64::min(box0.get_min().z, box1.get_min().z),
+                e: [
+                    f64::min(box0.get_min().x(), box1.get_min().x()),
+                    f64::min(box0.get_min().y(), box1.get_min().y()),
+                    f64::min(box0.get_min().z(), box1.get_min().z()),
+                ],
             },
             max: Vector3 {
-                x: f64::min(box0.get_min().x, box1.get_min().x),
-                y: f64::min(box0.get_min().y, box1.get_min().y),
-                z: f64::min(box0.get_min().z, box1.get_min().z),
+                e: [
+                    f64::max(box0.get_max().x(), box1.get_max().x()),
+                    f64::max(box0.get_max().y(), box1.get_max().y()),
+                    f64::max(box0.get_max().z(), box1.get_max().z()),
+                ],
             },
         }
     }

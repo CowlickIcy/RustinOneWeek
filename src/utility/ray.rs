@@ -1,20 +1,28 @@
 use super::*;
 pub struct Ray {
-    pub origin: Vector3,
-    pub dir: Vector3,
-    pub time: f64,
+    origin: Point,
+    dir: Vector3,
+    time: f64,
 }
 
 impl Ray {
     pub fn new(origin: Vector3, dir: Vector3, time: f64) -> Ray {
-        Ray {
-            origin: origin,
-            dir: dir,
-            time: time,
-        }
+        Ray { origin, dir, time }
     }
     pub fn at(self, t: f64) -> Point {
-        let ret = self.dir.mul_with_num(t).add(self.origin);
+        let ret = self.dir * t + self.origin;
         ret
+    }
+
+    pub fn origin(&self) -> Point {
+        self.origin
+    }
+
+    pub fn dir(&self) -> Vector3 {
+        self.dir
+    }
+
+    pub fn time(&self) -> f64 {
+        self.time
     }
 }

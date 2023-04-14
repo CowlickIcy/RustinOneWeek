@@ -6,9 +6,9 @@ type Color = Vector3;
 
 impl Color {
     pub fn write_color(pixel_color: &Color, samples_per_pixel: u32) {
-        let mut r = pixel_color.x;
-        let mut g = pixel_color.y;
-        let mut b = pixel_color.z;
+        let mut r = pixel_color.x();
+        let mut g = pixel_color.y();
+        let mut b = pixel_color.z();
 
         if r != r {
             r = 0.0;
