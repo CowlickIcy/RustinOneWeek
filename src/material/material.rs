@@ -1,6 +1,6 @@
 use super::*;
 use rand::Rng;
-use std::{intrinsics::powf64, marker::Sync};
+use std::marker::Sync;
 
 #[derive(Debug, Copy, Clone)]
 pub struct Lambertian<T: Texture> {
@@ -79,7 +79,7 @@ fn reflectance(cosine: f64, ref_index: f64) -> f64 {
 impl Material for Dielectric {
     fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<(Color, Ray)> {
         let mut rng = rand::thread_rng();
-        let attenuation = Color::new(1.0, 1.0, 1.0);
+        // let attenuation = Color::new(1.0, 1.0, 1.0);
         let refraction_ratio = if rec.front_face {
             1.0 / self.ir
         } else {
@@ -93,11 +93,54 @@ impl Material for Dielectric {
         let cannot_refract = refraction_ratio * sin_theta > 1.0;
         let direction =
             if cannot_refract || reflectance(cos_theta, refraction_ratio) > rng.gen::<f64>() {
-                unit_direction.reflect(rec.normal);
+                unit_direction.reflect(rec.normal)
             } else {
-                unit_direction.refract(rec.normal, refraction_ratio);
+                unit_direction.refract(rec.normal, refraction_ratio)
             };
 
         let scattered = Ray::new(rec.p, direction, r_in.time());
+        Some((Color::new(1.0, 1.0, 1.0), scattered))
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct DiffuseLight<T: Texture> {
+    albedo: T,
+}
+
+impl<T: Texture> DiffuseLight<T> {
+    pub fn new(albedo: T) -> DiffuseLight<T> {
+        DiffuseLight { albedo }
+    }
+}
+
+impl<T: Texture + Sync> Material for DiffuseLight<T> {
+    fn scatter(&self, _r_in: &Ray, _rec: &HitRecord) -> Option<(Color, Ray)> {
+        None
+    }
+    fn emitted(&self, rec: &HitRecord) -> Color {
+        if rec.front_face {
+            self.albedo.get_color(rec.u, rec.v, &rec.p)
+        } else {
+            Color::new(0.0, 0.0, 0.0)
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct Isotropic<T: Texture> {
+    albedo: T,
+}
+
+impl<T: Texture> Isotropic<T> {
+    pub fn new(albedo: T) -> Isotropic<T> {
+        Isotropic { albedo }
+    }
+}
+
+impl<T: Texture + Sync> Material for Isotropic<T> {
+    fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<(Color, Ray)> {
+        let scattered = Ray::new(rec.p, Vector3::random_in_unit_sphere(), r_in.time());
+        Some((self.albedo.get_color(rec.u, rec.v, &rec.p), scattered))
     }
 }
