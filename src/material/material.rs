@@ -23,12 +23,6 @@ impl<T: Texture + Sync> Material for Lambertian<T> {
         let scatted = Ray::new(rec.p, scatter_direction, r_in.time());
 
         Some((self.albedo.get_color(rec.u, rec.v, &rec.p), scatted))
-
-        // sca
-    }
-
-    fn emitted(&self, _rec: &HitRecord) -> Color {
-        Color::new(0.0, 0.0, 0.0)
     }
 }
 

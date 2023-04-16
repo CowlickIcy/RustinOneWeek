@@ -185,6 +185,15 @@ impl ops::Mul<&Vector3> for f64 {
     }
 }
 
+impl ops::Mul<Vector3> for f64 {
+    type Output = Vector3;
+    fn mul(self, other: Vector3) -> Vector3 {
+        Vector3 {
+            e: [self * other[0], self * other[1], self * other[2]],
+        }
+    }
+}
+
 impl ops::MulAssign<Vector3> for Vector3 {
     fn mul_assign(&mut self, other: Vector3) {
         *self = Vector3 {

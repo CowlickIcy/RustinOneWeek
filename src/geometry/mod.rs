@@ -4,8 +4,10 @@ pub use self::hittablelist::*;
 pub use self::rotate_y::*;
 pub use self::translate::*;
 pub use self::rectangular::*;
+pub use self::sphere::*;
 
 pub mod cube;
+pub mod sphere;
 pub mod hitrecord;
 pub mod hittablelist;
 pub mod rotate_y;

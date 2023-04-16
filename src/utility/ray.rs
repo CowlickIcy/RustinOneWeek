@@ -9,7 +9,7 @@ impl Ray {
     pub fn new(origin: Vector3, dir: Vector3, time: f64) -> Ray {
         Ray { origin, dir, time }
     }
-    pub fn at(self, t: f64) -> Point {
+    pub fn at(&self, t: f64) -> Point {
         let ret = self.dir * t + self.origin;
         ret
     }
