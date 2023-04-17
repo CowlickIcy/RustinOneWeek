@@ -234,3 +234,9 @@ impl ops::DivAssign<f64> for Vector3 {
         }
     }
 }
+
+impl std::iter::Sum for Vector3 {
+    fn sum<I: Iterator<Item = Vector3>>(iter: I) -> Vector3 {
+        iter.fold(Vector3::default(), std::ops::Add::add)
+    }
+}

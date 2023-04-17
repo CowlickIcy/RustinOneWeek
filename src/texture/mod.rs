@@ -9,8 +9,3 @@ use crate::utility::{macros::*, *};
 pub trait Texture {
     fn get_color(&self, u: f64, v: f64, p: &Point) -> Color;
 }
-
-#[derive(Debug, Clone, Copy)]
-pub struct BaseTexture {
-    color: Color,
-}

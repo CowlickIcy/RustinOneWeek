@@ -1,6 +1,26 @@
 use std::cmp::min;
-
 use super::*;
+
+
+#[derive(Debug, Clone, Copy)]
+pub struct SolidTexture {
+    color: Color,
+}
+
+impl SolidTexture {
+    pub fn new(color: Color) -> SolidTexture {
+        SolidTexture {
+            color
+        }
+    }
+}
+
+impl Texture for SolidTexture {
+    fn get_color(&self, _u: f64, _v: f64, _p: &Point) -> Color {
+        self.color
+    }
+}
+
 
 pub struct CheckerTexture<T: Texture, S: Texture> {
     odd: T,
