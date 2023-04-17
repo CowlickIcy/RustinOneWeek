@@ -1,18 +1,21 @@
 pub use self::cube::*;
 pub use self::hitrecord::*;
 pub use self::hittablelist::*;
-pub use self::rotate_y::*;
+pub use self::rotate::*;
 pub use self::translate::*;
+pub use self::rotate::*;
 pub use self::rectangular::*;
 pub use self::sphere::*;
+pub use self::constantmedium::*;
 
 pub mod cube;
 pub mod sphere;
 pub mod hitrecord;
 pub mod hittablelist;
-pub mod rotate_y;
 pub mod translate;
+pub mod rotate;
 pub mod rectangular;
+pub mod constantmedium;
 
 use crate::material::*;
 use crate::utility::*;
