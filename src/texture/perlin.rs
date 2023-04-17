@@ -38,6 +38,7 @@ pub fn perlin_generate_perm(resolution: usize) -> Vec<usize> {
     p
 }
 
+// trillinear interpolate
 pub fn perlin_interp(c: &mut [[[Vector3; 2]; 2]; 2], u: f64, v: f64, w: f64) -> f64 {
     let uu = u * u * (3.0 - 2.0 * u);
     let vv = v * v * (3.0 - 2.0 * v);

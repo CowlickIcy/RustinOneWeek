@@ -7,6 +7,8 @@ pub use self::rotate::*;
 pub use self::rectangular::*;
 pub use self::sphere::*;
 pub use self::constantmedium::*;
+pub use self::mesh::*;
+pub use self::bvh::*;
 
 pub mod cube;
 pub mod sphere;
@@ -16,6 +18,8 @@ pub mod translate;
 pub mod rotate;
 pub mod rectangular;
 pub mod constantmedium;
+pub mod mesh;
+pub mod bvh;
 
 use crate::material::*;
 use crate::utility::*;

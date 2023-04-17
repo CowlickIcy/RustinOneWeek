@@ -35,8 +35,8 @@ impl NoiseTexture {
     pub fn new(scale: f64, resolution: usize) -> NoiseTexture {
         NoiseTexture {
             noise: Perlin::new(resolution),
-            scale: scale,
-            resolution: resolution,
+            scale,
+            resolution,
         }
     }
 }

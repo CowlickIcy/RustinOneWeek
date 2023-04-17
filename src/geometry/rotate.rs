@@ -33,16 +33,16 @@ impl<H: Hittable> Rotate<H> {
         let sin_theta = radiants.sin();
         let cos_theta = radiants.cos();
 
-        let aabb = hittable.bounding_box(0.0, 1.0).map(|mut aabb| {
+        let rbox = hittable.bounding_box(0.0, 1.0).map(|mut rbox| {
             let mut min = Vector3::new(f64::INFINITY, f64::INFINITY, f64::INFINITY);
             let mut max = Vector3::new(-f64::INFINITY, -f64::INFINITY, -f64::INFINITY);
 
             for iter in 0..=1 {
                 for jter in 0..=1 {
                     for kter in 0..=1 {
-                        let r = kter as f64 * aabb.max.x() + (1 - kter) as f64 * aabb.min.x();
-                        let a = iter as f64 * aabb.max.y() + (1 - iter) as f64 * aabb.min.y();
-                        let b = jter as f64 * aabb.max.z() + (1 - jter) as f64 * aabb.min.z();
+                        let r = kter as f64 * rbox.max.x() + (1 - kter) as f64 * rbox.min.x();
+                        let a = iter as f64 * rbox.max.y() + (1 - iter) as f64 * rbox.min.y();
+                        let b = jter as f64 * rbox.max.z() + (1 - jter) as f64 * rbox.min.z();
 
                         let new_a = cos_theta * a + sin_theta * b;
                         let new_b = -sin_theta * a + cos_theta * b;
@@ -57,17 +57,17 @@ impl<H: Hittable> Rotate<H> {
                     }
                 }
             }
-            aabb.min = min;
-            aabb.max = max;
-            aabb
+            rbox.min = min;
+            rbox.max = max;
+            rbox
         });
 
         Rotate {
-            axis: axis,
-            sin_theta: sin_theta,
-            cos_theta: cos_theta,
-            hittable: hittable,
-            rbox: aabb,
+            axis,
+            sin_theta,
+            cos_theta,
+            hittable,
+            rbox,
         }
     }
 }

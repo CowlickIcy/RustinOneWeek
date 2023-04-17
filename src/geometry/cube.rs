@@ -67,7 +67,7 @@ impl Cube {
         Cube {
             cube_min: p0,
             cube_max: p1,
-            sides: sides,
+            sides,
         }
     }
 }

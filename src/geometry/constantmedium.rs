@@ -36,7 +36,7 @@ impl<H: Hittable, M: Material> Hittable for ConstantMedium<H, M> {
                         return Some(HitRecord {
                             p: r.at(t),
                             normal: Vector3::new(1.0, 0.0, 0.0),
-                            t: t,
+                            t,
                             u: 0.0,
                             v: 0.0,
                             front_face: false,
