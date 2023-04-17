@@ -72,7 +72,7 @@ fn main() {
         Scene::TwoSphere => {
             let (world, lights) = two_sphere();
             let background = Color::new(0.7, 0.8, 1.0);
-            let lookfrom = Point::new(10.0, 0.0, 0.0);
+            let lookfrom = Point::new(10.0, 1.0, 1.0);
             let lookat = Point::new(0.0, 0.0, 0.0);
             let vup = Vector3::new(0.0, 1.0, 0.0);
             let focus_dist = 10.0;

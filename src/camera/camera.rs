@@ -44,7 +44,7 @@ impl Camera {
 
         let w = (lookfrom - lookat).normalize();
         let u = vup.cross(w).normalize();
-        let v = w.cross(u).normalize();
+        let v = w.cross(u);
 
         let h = u * focus_dist * viewport_width;
         let v = v * focus_dist * viewport_width;
@@ -53,7 +53,7 @@ impl Camera {
             origin: lookfrom,
             horizontal: h,
             vertical: v,
-            lower_left_corner: lookfrom - h / 2.0 - v / 2.0 - w / focus_dist,
+            lower_left_corner: lookfrom - h / 2.0 - v / 2.0 - w * focus_dist,
             u,
             v,
             w,
