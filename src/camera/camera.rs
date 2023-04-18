@@ -5,15 +5,6 @@ type Point3 = Vector3;
 
 #[derive(Debug)]
 pub struct Camera {
-    // lookfrom: Point3,
-    // lookat: Point3,
-    // vup: Vector3,
-    // vfov: f64,
-    // aspect_ratio: f64,
-    // aperture: f64,
-    // focus_dist: f64,
-    // _time0: f64,
-    // _time1: f64,
     origin: Vector3,
     horizontal: Vector3,
     vertical: Vector3,

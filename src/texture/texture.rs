@@ -35,7 +35,7 @@ impl<T: Texture, S: Texture> CheckerTexture<T, S> {
 
 impl<T: Texture, S: Texture> Texture for CheckerTexture<T, S> {
     fn get_color(&self, u: f64, v: f64, p: &Point) -> Color {
-        let sines = f64::sin(10.0 * p.x()) * f64::sin(10.0 * p.y()) * f64::sin(10.0 * p.z());
+        let sines = (10.0 * p.x()).sin() * (10.0 * p.y()).sin() * (10.0 * p.z()).sin();
         if sines < 0.0 {
             self.odd.get_color(u, v, p)
         } else {

@@ -41,13 +41,10 @@ fn two_sphere() -> (Box<dyn Hittable>, Box<dyn Hittable>) {
 
     let top_mat = Lambertian::new(CheckerTexture::new(
         SolidTexture::new(Color::new(1.0, 1.0, 1.0)),
-        SolidTexture::new(Color::new(0.3, 0.3, 1.0)),
+        SolidTexture::new(Color::new(0.7, 0.3, 0.5)),
     ));
 
-    let bottom_mat = Lambertian::new(CheckerTexture::new(
-        SolidTexture::new(Color::new(1.0, 1.0, 1.0)),
-        SolidTexture::new(Color::new(0.3, 0.3, 1.0)),
-    ));
+    let bottom_mat = Lambertian::new(SolidTexture::new(Color::new(0.4, 0.31, 1.0)));
 
     let top_sphere = Sphere::new(Point::new(0.0, 2.0, 0.0), 2.0, top_mat);
     let bottom_sphere = Sphere::new(Point::new(0.0, -2.0, 0.0), 2.0, bottom_mat);

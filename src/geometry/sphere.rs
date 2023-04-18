@@ -17,8 +17,8 @@ impl<M: Material> Sphere<M> {
     }
 
     pub fn get_sphere_uv(p: &Point) -> (f64, f64) {
-        let theta = -p.y().acos();
-        let phi = -p.z().atan2(p.x()) + PI;
+        let theta = (-p.y()).acos();
+        let phi = (-p.z()).atan2(p.x()) + PI;
 
         let u = phi / (2.0 * PI);
         let v = theta / PI;
