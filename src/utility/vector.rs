@@ -33,9 +33,9 @@ impl Vector3 {
     pub fn cross(self, other: Vector3) -> Vector3 {
         Vector3 {
             e: [
-                self[1] * other[2] + self[2] * other[1],
-                self[2] * other[0] + self[0] * other[2],
-                self[0] * other[0] + self[1] * other[1],
+                self[1] * other[2] - self[2] * other[1],
+                self[2] * other[0] - self[0] * other[2],
+                self[0] * other[1] - self[1] * other[0],
             ],
         }
     }
