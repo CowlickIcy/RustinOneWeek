@@ -1,5 +1,6 @@
 pub use self::cube::*;
 pub use self::hitrecord::*;
+pub use self::scatterrecord::*;
 pub use self::hittablelist::*;
 pub use self::rotate::*;
 pub use self::translate::*;
@@ -20,6 +21,7 @@ pub mod rectangular;
 pub mod constantmedium;
 pub mod mesh;
 pub mod bvh;
+pub mod scatterrecord;
 
 use crate::material::*;
 use crate::utility::*;

@@ -15,6 +15,10 @@ impl Vector3 {
         Vector3 { e: [x, y, z] }
     }
 
+    pub fn one() -> Vector3 {
+        Vector3 { e: [1.0, 1.0, 1.0] }
+    }
+
     pub fn x(self) -> f64 {
         self[0]
     }
@@ -37,6 +41,16 @@ impl Vector3 {
                 self[1] * other[2] - self[2] * other[1],
                 self[2] * other[0] - self[0] * other[2],
                 self[0] * other[1] - self[1] * other[0],
+            ],
+        }
+    }
+
+    pub fn lerp(self, other: Vector3, t: f64) -> Vector3 {
+        Vector3 {
+            e: [
+                self[0] * (1.0 - t) + other[0] * t,
+                self[1] * (1.0 - t) + other[1] * t,
+                self[2] * (1.0 - t) + other[2] * t,
             ],
         }
     }
