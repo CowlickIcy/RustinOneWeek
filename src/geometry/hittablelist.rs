@@ -47,4 +47,7 @@ impl Hittable for HittableList {
             _ => None,
         }
     }
+    fn pdf_value(&self, o: Point, v: Vector3) -> f64 {
+        self.objects.iter().map(|h| h.pdf_value(o, v)).sum::<f64>() / self.objects.len() as f64
+    }
 }

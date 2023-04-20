@@ -82,4 +82,19 @@ impl<M: Material> Hittable for AARect<M> {
 
         Some(Aabb::new(min, max))
     }
+
+    fn pdf_value(&self, o: Point, v: Vector3) -> f64 {
+        if let Some(rec) = self.hit(&Ray::new(o, v, 0.0), 0.0, f64::INFINITY) {
+            let area = (self.a1 - self.a0) * (self.b1 - self.b0);
+            let distance_squared = rec.t.powi(2) * v.length().powi(2);
+            let cosine = v.dot(rec.normal).abs() / v.length();
+            if cosine != 0.0 {
+                distance_squared / (cosine * area)
+            } else {
+                0.0
+            }
+        } else {
+            0.0
+        }
+    }
 }

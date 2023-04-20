@@ -13,7 +13,7 @@ pub trait Material: Sync {
     fn scatter(&self, _r_in: &Ray, _rec: &HitRecord) -> Option<(Color, Ray)> {
         None
     }
-    fn brdf(&self, _r_in: &Ray, _r_out: &Ray, rec: &HitRecord) -> Vector3 {
+    fn brdf(&self, _r_in: &Ray, _r_out: &Ray, _rec: &HitRecord) -> Vector3 {
         Vector3::default()
     }
 }

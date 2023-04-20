@@ -24,4 +24,17 @@ impl HitRecord<'_> {
     }
 }
 
+pub enum ScatterRecord<'a> {
+    Specular {
+        specular_ray: Ray,
+        attenuation: Color,
+    },
+    Scatter {
+        pdf: PDF<'a>,
+        attenuation: Color,
+    },
+    Microfacet {
+        pdf: PDF<'a>,
+    },
+}
 
