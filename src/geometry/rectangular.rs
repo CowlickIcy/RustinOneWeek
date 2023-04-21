@@ -1,23 +1,13 @@
 use super::*;
 
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub enum Plane {
     XY,
     XZ,
     YZ,
 }
 
-impl Plane {
-    pub fn get_axis_index(plane: &Plane) -> (usize, usize, usize) {
-        match plane {
-            Plane::XY => (0, 1, 2),
-            Plane::XZ => (1, 0, 2),
-            Plane::YZ => (2, 0, 1),
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct AARect<M: Material> {
     plane: Plane,
     a0: f64,
@@ -26,6 +16,14 @@ pub struct AARect<M: Material> {
     b1: f64,
     k: f64,
     material: M,
+}
+
+fn get_axis_index(plane: &Plane) -> (usize, usize, usize) {
+    match plane {
+        Plane::YZ => (0, 1, 2),
+        Plane::XZ => (1, 0, 2),
+        Plane::XY => (2, 0, 1),
+    }
 }
 
 impl<M: Material> AARect<M> {
@@ -43,8 +41,8 @@ impl<M: Material> AARect<M> {
 }
 
 impl<M: Material> Hittable for AARect<M> {
-    fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
-        let (k_axis_index, a_axis_index, b_axis_index) = Plane::get_axis_index(&self.plane);
+    fn hit(&self, r: &crate::ray::Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
+        let (k_axis_index, a_axis_index, b_axis_index) = get_axis_index(&self.plane);
         let t = (self.k - r.origin()[k_axis_index]) / r.dir()[k_axis_index];
         if t < t_min || t > t_max {
             None
@@ -61,32 +59,35 @@ impl<M: Material> Hittable for AARect<M> {
                 normal[k_axis_index] = 1.0;
 
                 let mut rec = HitRecord {
-                    p: p,
-                    normal: normal,
-                    t: t,
-                    u: u,
-                    v: v,
+                    p,
+                    normal,
+                    t,
+                    u,
+                    v,
                     front_face: false,
                     mat: &self.material,
                 };
+
                 rec.set_face_normal(r, normal);
+
                 Some(rec)
             }
         }
     }
 
-    fn bounding_box(&self, _time0: f64, _time1: f64) -> Option<Aabb> {
-        const E: f64 = 0.00001;
-        let min = Vector3::new(self.a0, self.b0, self.k - E);
-        let max = Vector3::new(self.a1, self.b1, self.k - E);
+    fn bounding_box(&self, t0: f64, t1: f64) -> Option<Aabb> {
+        // the bounding box must have non-zero width in each dimension, so pad the Z dimension a small amount.
+        let min = Vector3::new(self.a0, self.b0, self.k - 0.0001);
+        let max = Vector3::new(self.a1, self.b1, self.k + 0.0001);
 
         Some(Aabb::new(min, max))
     }
 
     fn pdf_value(&self, o: Point, v: Vector3) -> f64 {
-        if let Some(rec) = self.hit(&Ray::new(o, v, 0.0), 0.0, f64::INFINITY) {
+        if let Some(rec) = self.hit(&Ray::new(o, v, 0.0), 0.001, f64::INFINITY) {
+            // integration by substitution
             let area = (self.a1 - self.a0) * (self.b1 - self.b0);
-            let distance_squared = rec.t.powi(2) * v.length().powi(2);
+            let distance_squared = rec.t.powi(2) * v.length_squared();
             let cosine = v.dot(rec.normal).abs() / v.length();
             if cosine != 0.0 {
                 distance_squared / (cosine * area)

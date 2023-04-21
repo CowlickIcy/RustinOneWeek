@@ -1,4 +1,4 @@
-#![allow(dead_code)]
+#![allow(dead_code, unused_variables)]
 mod camera;
 mod geometry;
 mod material;
@@ -77,7 +77,6 @@ fn cornell_box_test() -> (Box<dyn Hittable>, Box<dyn Hittable>) {
     world.add(Sphere::new(Point::new(0.0, 0.0, 0.0), 200.0, m_white));
     world.add(Sphere::new(Point::new(200.0, 0.0, 0.0), 200.0, m_red));
 
-
     lights.add(rect_light);
     (Box::new(world), Box::new(lights))
 }
@@ -86,18 +85,18 @@ fn cornell_box() -> (Box<dyn Hittable>, Box<dyn Hittable>) {
     let mut world = HittableList::default();
     let mut lights = HittableList::default();
 
-    let m_black = Lambertian::new(SolidTexture::new(Color::new(0.0, 0.0, 0.0)));
-    let m_white = Lambertian::new(SolidTexture::new(Color::new(0.73, 0.73, 0.73)));
-    let m_red = Lambertian::new(SolidTexture::new(Color::new(0.65, 0.05, 0.05)));
-    let m_green = Lambertian::new(SolidTexture::new(Color::new(0.12, 0.45, 0.15)));
-    let m_blue = Lambertian::new(SolidTexture::new(Color::new(0.051, 0.049, 1.0)));
+    let red = Lambertian::new(SolidTexture::new(Color::new(0.65, 0.05, 0.05)));
+    let white = Lambertian::new(SolidTexture::new(Color::new(0.73, 0.73, 0.73)));
+    let green = Lambertian::new(SolidTexture::new(Color::new(0.12, 0.45, 0.15)));
+    let blue = Lambertian::new(SolidTexture::new(Color::new(0.051, 0.459, 1.000)));
+    let lemon_yellow = Lambertian::new(SolidTexture::new(Color::new(0.894, 0.941, 0.141)));
+    let cotinga_purple = Lambertian::new(SolidTexture::new(Color::new(0.204, 0.000, 0.349)));
 
-    let m_dielectric = Dielectric::new(1.333);
-    let m_metal = Metallic::new(Color::new(0.8, 0.85, 0.88), 0.02);
-    let m_light = DiffuseLight::new(SolidTexture::new(Color::new(15.0, 15.0, 15.0)));
-
-    let m_pbr = PBR::new(
-        SolidTexture::new(Color::new(1.0, 1.0, 1.0)),
+    let dielectric = Dielectric::new(1.5);
+    let metal = Metallic::new(Color::new(0.8, 0.85, 0.88), 0.0);
+    let light = DiffuseLight::new(SolidTexture::new(Color::new(15.0, 15.0, 15.0)));
+    let pbr = PBR::new(
+        SolidTexture::new(Color::new(0.6, 0.7, 0.2)),
         0.0,
         0.0,
         0.0,
@@ -109,46 +108,30 @@ fn cornell_box() -> (Box<dyn Hittable>, Box<dyn Hittable>) {
         0.0,
         0.0,
     );
+    let rect_light = AARect::new(Plane::XZ, 213.0, 343.0, 227.0, 332.0, 554.0, light);
 
-    let rect_light = AARect::new(Plane::XZ, 213.0, 343.0, 227.0, 332.0, 554.0, m_light);
-
-    world.add(AARect::new(
-        Plane::YZ,
-        0.0,
-        555.0,
-        0.0,
-        555.0,
-        555.0,
-        m_green,
-    ));
-    world.add(AARect::new(Plane::YZ, 0.0, 555.0, 0.0, 555.0, 0.0, m_red));
+    world.add(AARect::new(Plane::YZ, 0.0, 555.0, 0.0, 555.0, 555.0, green));
+    world.add(AARect::new(Plane::YZ, 0.0, 555.0, 0.0, 555.0, 0.0, red));
+    world.add(AARect::new(Plane::XZ, 0.0, 555.0, 0.0, 555.0, 555.0, white));
+    world.add(AARect::new(Plane::XY, 0.0, 555.0, 0.0, 555.0, 555.0, blue));
     world.add(rect_light.clone());
-    world.add(AARect::new(Plane::XZ, 0.0, 555.0, 0.0, 555.0, 0.0, m_white));
     world.add(AARect::new(
         Plane::XZ,
         0.0,
         555.0,
         0.0,
         555.0,
-        555.0,
-        m_white.clone(),
-    ));
-    world.add(AARect::new(
-        Plane::XY,
         0.0,
-        555.0,
-        0.0,
-        555.0,
-        555.0,
-        m_white.clone(),
+        lemon_yellow,
     ));
+
     world.add(Translate::new(
         Rotate::new(
             RotateAxis::Y,
             Cube::new(
                 Point::new(0.0, 0.0, 0.0),
                 Point::new(165.0, 165.0, 165.0),
-                m_white.clone(),
+                pbr,
             ),
             -18.0,
         ),
@@ -160,7 +143,7 @@ fn cornell_box() -> (Box<dyn Hittable>, Box<dyn Hittable>) {
             Cube::new(
                 Point::new(0.0, 0.0, 0.0),
                 Point::new(165.0, 330.0, 165.0),
-                m_white.clone(),
+                metal,
             ),
             15.0,
         ),
@@ -168,6 +151,7 @@ fn cornell_box() -> (Box<dyn Hittable>, Box<dyn Hittable>) {
     ));
 
     lights.add(rect_light);
+
     (Box::new(world), Box::new(lights))
 }
 fn main() {
@@ -175,7 +159,7 @@ fn main() {
     const ASPECT_RATIO: f64 = 1.0;
     const IMAGE_WIDTH: u64 = 500;
     const IMAGE_HEIGHT: u64 = ((IMAGE_WIDTH as f64) / ASPECT_RATIO) as u64;
-    const SAMPLES_PER_PIXEL: u64 = 800;
+    const SAMPLES_PER_PIXEL: u64 = 500;
     const MAX_DEPTH: u64 = 100;
 
     // scene
@@ -184,7 +168,7 @@ fn main() {
         Scene::TwoSphere => {
             let (world, lights) = two_sphere();
             let background = Color::new(0.7, 0.8, 1.0);
-            let lookfrom = Point::new(10.0, 1.0, 1.0);
+            let lookfrom = Point::new(13.0, 2.0, 3.0);
             let lookat = Point::new(0.0, 0.0, 0.0);
             let vup = Vector3::new(0.0, 1.0, 0.0);
             let focus_dist = 10.0;
@@ -206,7 +190,7 @@ fn main() {
         }
         Scene::CornellBox => {
             let (world, lights) = cornell_box();
-            let backgournd = Color::new(0.5, 0.5, 0.5);
+            let backgournd = Color::new(0.0, 0.0, 0.0);
 
             let lookfrom = Point::new(278.0, 278.0, -800.0);
             let lookat = Point::new(278.0, 278.0, 0.0);

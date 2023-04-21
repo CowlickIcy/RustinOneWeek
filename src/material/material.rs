@@ -92,6 +92,7 @@ impl Material for Metallic {
     }
 }
 
+#[derive(Debug, Clone)]
 pub struct Dielectric {
     pub ir: f64,
 }
@@ -151,11 +152,7 @@ impl<T: Texture + Sync> Material for DiffuseLight<T> {
         None
     }
     fn emitted(&self, rec: &HitRecord) -> Color {
-        if rec.front_face {
-            self.albedo.get_color(rec.u, rec.v, &rec.p)
-        } else {
-            Color::new(0.0, 0.0, 0.0)
-        }
+        self.albedo.get_color(rec.u, rec.v, &rec.p)
     }
 }
 
@@ -299,7 +296,7 @@ impl<T: Texture + Sync> Material for PBR<T> {
             * (linear_color / PI * fresnel_diffuse.lerp(fresnel_subsurface, self.subsurface)
                 + fresnel_sheen)
             + specular_d * specular_g * specular_f / (4.0 * n_dot_v * n_dot_l)
-            + self.clearcoat * 0.25 * Vector3::one() * clearcoat_d * clearcoat_f * clearcoat_g / (4.0 * n_dot_v * n_dot_l)
-
+            + self.clearcoat * 0.25 * Vector3::one() * clearcoat_d * clearcoat_f * clearcoat_g
+                / (4.0 * n_dot_v * n_dot_l)
     }
 }

@@ -94,18 +94,18 @@ impl Vector3 {
     }
 
     pub fn random_in_unit_sphere() -> Vector3 {
-        // loop {
-        //     let p = Vector3::random(-1.0, 1.0);
-        //     if p.length() < 1.0 {
-        //         return p;
-        //     }
-        // }
+        loop {
+            let p = Vector3::random(-1.0, 1.0);
+            if p.length() < 1.0 {
+                return p;
+            }
+        }
         // Polar Coordinates
-        let mut rng = rand::thread_rng();
-        let a = rng.gen_range(0.0..(2.0 * PI));
-        let z = rng.gen_range(-1.0..1.0);
-        let r = f64::sqrt(1.0 - z * z);
-        Vector3::new(r * a.cos(), r * a.sin(), z)
+        // let mut rng = rand::thread_rng();
+        // let a = rng.gen_range(0.0..(2.0 * PI));
+        // let z = rng.gen_range(-1.0..1.0);
+        // let r = f64::sqrt(1.0 - z * z);
+        // Vector3::new(r * a.cos(), r * a.sin(), z)
     }
 
     pub fn random_in_hemisphere(normal: Vector3) -> Vector3 {

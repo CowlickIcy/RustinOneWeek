@@ -74,7 +74,7 @@ impl<M: Material> Hittable for Sphere<M> {
     }
 
     fn pdf_value(&self, o: Point, v: Vector3) -> f64 {
-        if let Some(hit) = self.hit(&Ray::new(o, v, 0.0), 0.001, f64::INFINITY) {
+        if let Some(_hit) = self.hit(&Ray::new(o, v, 0.0), 0.001, f64::INFINITY) {
             let cos_theta_max =
                 (1.0 - self.radius.powi(2) / (self.center - o).length_squared()).sqrt();
             let solid_angle = 2.0 * PI * (1.0 - cos_theta_max);
