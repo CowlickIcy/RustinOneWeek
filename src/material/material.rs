@@ -62,6 +62,17 @@ impl<T: Texture + Sync> Material for Lambertian<T> {
 
         Some((self.albedo.get_color(rec.u, rec.v, &rec.p), scatted))
     }
+    fn scatter_mc_methode(&self, _r_in: &Ray, rec: &HitRecord) -> Option<ScatterRecord> {
+        let rec = ScatterRecord::Scatter {
+            pdf: PDF::cosine_pdf(rec.normal),
+            attenuation: self.albedo.get_color(rec.u, rec.v, &rec.p),
+        };
+        Some(rec)
+    }
+    fn scattering_pdf(&self, r_in: &Ray, rec: &HitRecord, scattered: &Ray) -> f64 {
+        let cosine = rec.normal.dot(scattered.dir().normalize()).max(0.0);
+        cosine / PI
+    }
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -86,6 +97,23 @@ impl Material for Metallic {
         );
         if scattered.dir().dot(rec.normal) > 0.0 {
             Some((self.albedo, scattered))
+        } else {
+            None
+        }
+    }
+    fn scatter_mc_methode(&self, r_in: &Ray, rec: &HitRecord) -> Option<ScatterRecord> {
+        let reflected = r_in.dir().reflect(rec.normal).normalize();
+        let scattered = Ray::new(
+            rec.p,
+            reflected + Vector3::random_in_unit_sphere() * self.fuzz,
+            r_in.time(),
+        );
+        if scattered.dir().dot(rec.normal) > 0.0 {
+            let rec = ScatterRecord::Specular {
+                specular_ray: scattered,
+                attenuation: self.albedo,
+            };
+            Some(rec)
         } else {
             None
         }
@@ -133,6 +161,34 @@ impl Material for Dielectric {
 
         let scattered = Ray::new(rec.p, direction, r_in.time());
         Some((Color::new(1.0, 1.0, 1.0), scattered))
+    }
+
+    fn scatter_mc_methode(&self, r_in: &Ray, rec: &HitRecord) -> Option<ScatterRecord> {
+        let mut rng = rand::thread_rng();
+        let attenuation = Color::one();
+        let refraction_ratio = if rec.front_face {
+            1.0 / self.ir
+        } else {
+            self.ir
+        };
+        let unit_direction = r_in.dir().normalize();
+        let cos_theta = (-unit_direction).dot(rec.normal).min(1.0);
+        let sin_theta = (1.0 - cos_theta.powi(2)).sqrt();
+
+        let cannot_refract = refraction_ratio * sin_theta > 1.0;
+        let direction =
+            if cannot_refract || reflectance(cos_theta, refraction_ratio) > rng.gen::<f64>() {
+                unit_direction.reflect(rec.normal)
+            } else {
+                unit_direction.refract(rec.normal, refraction_ratio)
+            };
+
+        let scattered = Ray::new(rec.p, direction, r_in.time());
+        let f_rec = ScatterRecord::Specular {
+            specular_ray: scattered,
+            attenuation,
+        };
+        Some(f_rec)
     }
 }
 
@@ -298,5 +354,19 @@ impl<T: Texture + Sync> Material for PBR<T> {
             + specular_d * specular_g * specular_f / (4.0 * n_dot_v * n_dot_l)
             + self.clearcoat * 0.25 * Vector3::one() * clearcoat_d * clearcoat_f * clearcoat_g
                 / (4.0 * n_dot_v * n_dot_l)
+    }
+
+    fn scatter_mc_methode(&self, r_in: &Ray, rec: &HitRecord) -> Option<ScatterRecord> {
+        let rec = ScatterRecord::Microfacet {
+            pdf: PDF::brdf_pdf(
+                rec.normal,
+                r_in.dir(),
+                self.roughness,
+                self.anisotropic,
+                self.clearcoat,
+                self.clearcoat_gloss,
+            ),
+        };
+        Some(rec)
     }
 }

@@ -1,4 +1,5 @@
 use super::*;
+use rand::Rng;
 
 #[derive(Clone, Copy)]
 pub struct Sphere<M: Material> {
@@ -24,6 +25,17 @@ impl<M: Material> Sphere<M> {
         let v = theta / PI;
 
         (u, v)
+    }
+
+    pub fn random_to_sphere(radius: f64, distance_squared: f64) -> Vector3 {
+        let mut rng = rand::thread_rng();
+        let r1 = rng.gen::<f64>();
+        let r2 = rng.gen::<f64>();
+        let z = 1.0 + r2 * ((1.0 - radius.powi(2) / distance_squared).sqrt() - 1.0);
+        let phi = 2.0 * f64::consts::PI * r1;
+        let x = phi.cos() * (1.0 - z.powi(2)).sqrt();
+        let y = phi.sin() * (1.0 - z.powi(2)).sqrt();
+        Vector3::new(x, y, z)
     }
 }
 
@@ -82,6 +94,13 @@ impl<M: Material> Hittable for Sphere<M> {
         } else {
             0.0
         }
+    }
+
+    fn random(&self, o: Vector3) -> Vector3 {
+        let direction = self.center - o;
+        let distance_squared = direction.length_squared();
+        let uvw = ONB::build_from_w(&direction);
+        uvw.local(&Sphere::<M>::random_to_sphere(self.radius, distance_squared))
     }
 }
 

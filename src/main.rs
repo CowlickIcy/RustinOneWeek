@@ -23,13 +23,47 @@ fn ray_color(
     depth: u64,
 ) -> Color {
     if depth <= 0 {
-        return Color::default();
+        return Color::zero();
     }
 
     if let Some(rec) = world.hit(r, 0.001, f64::INFINITY) {
         let emitted = rec.mat.emitted(&rec);
+
+        // let use_old_methom = true;
+
         if let Some((attenuation, scattered)) = rec.mat.scatter(r, &rec) {
             emitted + attenuation * ray_color(&scattered, background, world, lights, depth - 1)
+        // if let Some(srec) = rec.mat.scatter_mc_methode(r, &rec) {
+        //     match srec {
+        //         ScatterRecord::Specular {
+        //             specular_ray,
+        //             attenuation,
+        //         } => {
+        //             return attenuation
+        //                 * ray_color(&specular_ray, background, world, lights, depth - 1);
+        //         }
+        //         ScatterRecord::Scatter { pdf, attenuation } => {
+        //             let hittable_pdf = PDF::hittable_pdf(rec.p, lights);
+        //             let mixture_pdf = PDF::mixture_pdf(&hittable_pdf, &pdf);
+        //             let scattered = Ray::new(rec.p, mixture_pdf.generate(), r.time());
+        //             let pdf_value = mixture_pdf.value(scattered.dir());
+        //             return emitted
+        //                 + attenuation
+        //                     * rec.mat.scattering_pdf(r, &rec, &scattered)
+        //                     * ray_color(&scattered, background, world, lights, depth - 1)
+        //                     / pdf_value;
+        //         }
+        //         ScatterRecord::Microfacet { pdf } => {
+        //             let hittable_pdf = PDF::hittable_pdf(rec.p, lights);
+        //             let mixture_pdf = PDF::mixture_pdf(&hittable_pdf, &pdf);
+        //             let scattered = Ray::new(rec.p, mixture_pdf.generate(), r.time());
+        //             let pdf_value = mixture_pdf.value(scattered.dir());
+        //             return emitted
+        //                 + rec.mat.brdf(r, &scattered, &rec)
+        //                     * ray_color(&scattered, background, world, lights, depth - 1)
+        //                     / pdf_value;
+        //         }
+        // }
         } else {
             emitted
         }
@@ -85,17 +119,16 @@ fn cornell_box() -> (Box<dyn Hittable>, Box<dyn Hittable>) {
     let mut world = HittableList::default();
     let mut lights = HittableList::default();
 
-    let red = Lambertian::new(SolidTexture::new(Color::new(0.65, 0.05, 0.05)));
-    let white = Lambertian::new(SolidTexture::new(Color::new(0.73, 0.73, 0.73)));
-    let green = Lambertian::new(SolidTexture::new(Color::new(0.12, 0.45, 0.15)));
-    let blue = Lambertian::new(SolidTexture::new(Color::new(0.051, 0.459, 1.000)));
-    let lemon_yellow = Lambertian::new(SolidTexture::new(Color::new(0.894, 0.941, 0.141)));
-    let cotinga_purple = Lambertian::new(SolidTexture::new(Color::new(0.204, 0.000, 0.349)));
-
-    let dielectric = Dielectric::new(1.5);
-    let metal = Metallic::new(Color::new(0.8, 0.85, 0.88), 0.0);
-    let light = DiffuseLight::new(SolidTexture::new(Color::new(15.0, 15.0, 15.0)));
-    let pbr = PBR::new(
+    let m_red = Lambertian::new(SolidTexture::new(Color::new(0.65, 0.05, 0.05)));
+    let m_white = Lambertian::new(SolidTexture::new(Color::new(0.73, 0.73, 0.73)));
+    let m_green = Lambertian::new(SolidTexture::new(Color::new(0.12, 0.45, 0.15)));
+    let m_blue = Lambertian::new(SolidTexture::new(Color::new(0.051, 0.459, 1.000)));
+    let m_lemon_yellow = Lambertian::new(SolidTexture::new(Color::new(0.894, 0.941, 0.141)));
+    let m_cotinga_purple = Lambertian::new(SolidTexture::new(Color::new(0.204, 0.000, 0.349)));
+    let m_dielectric = Dielectric::new(1.5);
+    let m_metal = Metallic::new(Color::new(0.8, 0.85, 0.88), 0.0);
+    let m_light = DiffuseLight::new(SolidTexture::new(Color::new(15.0, 15.0, 15.0)));
+    let m_pbr = PBR::new(
         SolidTexture::new(Color::new(0.6, 0.7, 0.2)),
         0.0,
         0.0,
@@ -108,12 +141,12 @@ fn cornell_box() -> (Box<dyn Hittable>, Box<dyn Hittable>) {
         0.0,
         0.0,
     );
-    let rect_light = AARect::new(Plane::XZ, 213.0, 343.0, 227.0, 332.0, 554.0, light);
+    let rect_light = AARect::new(Plane::XZ, 213.0, 343.0, 227.0, 332.0, 554.0, m_light.clone());
 
-    world.add(AARect::new(Plane::YZ, 0.0, 555.0, 0.0, 555.0, 555.0, green));
-    world.add(AARect::new(Plane::YZ, 0.0, 555.0, 0.0, 555.0, 0.0, red));
-    world.add(AARect::new(Plane::XZ, 0.0, 555.0, 0.0, 555.0, 555.0, white));
-    world.add(AARect::new(Plane::XY, 0.0, 555.0, 0.0, 555.0, 555.0, blue));
+    world.add(AARect::new(Plane::YZ, 0.0, 555.0, 0.0, 555.0, 555.0, m_green));
+    world.add(AARect::new(Plane::YZ, 0.0, 555.0, 0.0, 555.0, 0.0, m_red));
+    world.add(AARect::new(Plane::XZ, 0.0, 555.0, 0.0, 555.0, 555.0, m_white));
+    world.add(AARect::new(Plane::XY, 0.0, 555.0, 0.0, 555.0, 555.0, m_blue));
     world.add(rect_light.clone());
     world.add(AARect::new(
         Plane::XZ,
@@ -122,33 +155,34 @@ fn cornell_box() -> (Box<dyn Hittable>, Box<dyn Hittable>) {
         0.0,
         555.0,
         0.0,
-        lemon_yellow,
+        m_lemon_yellow,
     ));
 
-    world.add(Translate::new(
-        Rotate::new(
-            RotateAxis::Y,
-            Cube::new(
-                Point::new(0.0, 0.0, 0.0),
-                Point::new(165.0, 165.0, 165.0),
-                pbr,
-            ),
-            -18.0,
-        ),
-        Vector3::new(130.0, 0.0, 65.0),
-    ));
+    // world.add(Translate::new(
+    //     Rotate::new(
+    //         RotateAxis::Y,
+    //         Cube::new(
+    //             Point::new(0.0, 0.0, 0.0),
+    //             Point::new(165.0, 165.0, 165.0),
+    //             m_light,
+    //         ),
+    //         -18.0,
+    //     ),
+    //     Vector3::new(130.0, 0.0, 65.0),
+    // ));
     world.add(Translate::new(
         Rotate::new(
             RotateAxis::Y,
             Cube::new(
                 Point::new(0.0, 0.0, 0.0),
                 Point::new(165.0, 330.0, 165.0),
-                metal,
+                m_metal,
             ),
             15.0,
         ),
         Vector3::new(265.0, 0.0, 295.0),
     ));
+    world.add(Sphere::new(Point::new(88.0, 165.0, 88.0), 80.0, m_metal));
 
     lights.add(rect_light);
 
@@ -159,7 +193,7 @@ fn main() {
     const ASPECT_RATIO: f64 = 1.0;
     const IMAGE_WIDTH: u64 = 500;
     const IMAGE_HEIGHT: u64 = ((IMAGE_WIDTH as f64) / ASPECT_RATIO) as u64;
-    const SAMPLES_PER_PIXEL: u64 = 500;
+    const SAMPLES_PER_PIXEL: u64 = 1000;
     const MAX_DEPTH: u64 = 100;
 
     // scene
@@ -190,7 +224,7 @@ fn main() {
         }
         Scene::CornellBox => {
             let (world, lights) = cornell_box();
-            let backgournd = Color::new(0.0, 0.0, 0.0);
+            let backgournd = Color::new(0.3, 0.3, 0.3);
 
             let lookfrom = Point::new(278.0, 278.0, -800.0);
             let lookat = Point::new(278.0, 278.0, 0.0);

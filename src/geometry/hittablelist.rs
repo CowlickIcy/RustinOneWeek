@@ -1,3 +1,5 @@
+use rand::seq::SliceRandom;
+
 use super::*;
 
 #[derive(Default)]
@@ -49,5 +51,9 @@ impl Hittable for HittableList {
     }
     fn pdf_value(&self, o: Point, v: Vector3) -> f64 {
         self.objects.iter().map(|h| h.pdf_value(o, v)).sum::<f64>() / self.objects.len() as f64
+    }
+
+    fn random(&self, o: Vector3) -> Vector3 {
+        self.objects.choose(&mut rand::thread_rng()).unwrap().random(o)
     }
 }

@@ -30,4 +30,7 @@ pub trait Hittable: Sync {
     fn pdf_value(&self, _o: Point, _v: Vector3) -> f64 {
         0.0
     }
+    fn random(&self, o: Vector3) -> Vector3 {
+        Vector3::new(1.0, 0.0, 0.0)
+    }
 }

@@ -19,6 +19,10 @@ impl Vector3 {
         Vector3 { e: [1.0, 1.0, 1.0] }
     }
 
+    pub fn zero() -> Vector3 {
+        Vector3 { e: [0.0, 0.0, 0.0] }
+    }
+
     pub fn x(self) -> f64 {
         self[0]
     }
