@@ -5,6 +5,7 @@ mod material;
 mod texture;
 mod utility;
 
+use image::*;
 use rand::Rng;
 use rayon::prelude::*;
 use std::io::{stderr, Write};
@@ -141,12 +142,44 @@ fn cornell_box() -> (Box<dyn Hittable>, Box<dyn Hittable>) {
         0.0,
         0.0,
     );
-    let rect_light = AARect::new(Plane::XZ, 213.0, 343.0, 227.0, 332.0, 554.0, m_light.clone());
+    let rect_light = AARect::new(
+        Plane::XZ,
+        213.0,
+        343.0,
+        227.0,
+        332.0,
+        554.0,
+        m_light.clone(),
+    );
 
-    world.add(AARect::new(Plane::YZ, 0.0, 555.0, 0.0, 555.0, 555.0, m_green));
+    world.add(AARect::new(
+        Plane::YZ,
+        0.0,
+        555.0,
+        0.0,
+        555.0,
+        555.0,
+        m_green,
+    ));
     world.add(AARect::new(Plane::YZ, 0.0, 555.0, 0.0, 555.0, 0.0, m_red));
-    world.add(AARect::new(Plane::XZ, 0.0, 555.0, 0.0, 555.0, 555.0, m_white));
-    world.add(AARect::new(Plane::XY, 0.0, 555.0, 0.0, 555.0, 555.0, m_blue));
+    world.add(AARect::new(
+        Plane::XZ,
+        0.0,
+        555.0,
+        0.0,
+        555.0,
+        555.0,
+        m_white,
+    ));
+    world.add(AARect::new(
+        Plane::XY,
+        0.0,
+        555.0,
+        0.0,
+        555.0,
+        555.0,
+        m_blue,
+    ));
     world.add(rect_light.clone());
     world.add(AARect::new(
         Plane::XZ,
@@ -191,9 +224,9 @@ fn cornell_box() -> (Box<dyn Hittable>, Box<dyn Hittable>) {
 fn main() {
     // image settings
     const ASPECT_RATIO: f64 = 1.0;
-    const IMAGE_WIDTH: u64 = 500;
-    const IMAGE_HEIGHT: u64 = ((IMAGE_WIDTH as f64) / ASPECT_RATIO) as u64;
-    const SAMPLES_PER_PIXEL: u64 = 1000;
+    const IMAGE_WIDTH: u32 = 500;
+    const IMAGE_HEIGHT: u32 = ((IMAGE_WIDTH as f64) / ASPECT_RATIO) as u32;
+    const SAMPLES_PER_PIXEL: u64 = 100;
     const MAX_DEPTH: u64 = 100;
 
     // scene
@@ -270,17 +303,14 @@ fn main() {
         }
     };
 
-    // ppm headera
-    println!("P3");
-    println!("{} {}", IMAGE_WIDTH, IMAGE_HEIGHT);
-    println!("255");
+    // create a new ImgBuf with
+    let mut imgbuf: RgbImage = image::ImageBuffer::new(IMAGE_WIDTH, IMAGE_WIDTH);
 
-    // scan
-
-    for h in (0..IMAGE_HEIGHT).rev() {
-        eprint!("\r Scanlines remaining: {:3}", IMAGE_HEIGHT - 1 - h);
+    // image scan
+    for y in 0..IMAGE_HEIGHT {
+        eprint!("\r Scanlines remaining: {:3}", y);
         stderr().flush().unwrap();
-        for w in 0..IMAGE_WIDTH {
+        for x in 0..IMAGE_WIDTH {
             let pixel_color: Color = (0..SAMPLES_PER_PIXEL)
                 .into_par_iter()
                 .map(|_sample| {
@@ -288,16 +318,20 @@ fn main() {
                     let random_u = rng.gen::<f64>();
                     let random_v = rng.gen::<f64>();
 
-                    let u = ((w as f64) + random_u) / (IMAGE_WIDTH - 1) as f64;
-                    let v = ((h as f64) + random_v) / (IMAGE_HEIGHT - 1) as f64;
+                    let u = ((x as f64) + random_u) / (IMAGE_WIDTH - 1) as f64;
+                    let v = ((y as f64) + random_v) / (IMAGE_HEIGHT - 1) as f64;
 
                     let r = camera.get_ray(u, v);
 
                     ray_color(&r, background, &world, &lights, MAX_DEPTH)
                 })
                 .sum();
-            println!("{}", pixel_color.format_color(SAMPLES_PER_PIXEL));
+            let pixel = imgbuf.get_pixel_mut(x, IMAGE_HEIGHT - 1 - y);
+
+            *pixel = image::Rgb(pixel_color.format_channel(SAMPLES_PER_PIXEL));
         }
         eprintln!("Done.");
     }
+
+    imgbuf.save("image.png").unwrap();
 }

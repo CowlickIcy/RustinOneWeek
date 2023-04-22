@@ -178,7 +178,7 @@ impl<'a> PDF<'a> {
                 clearcoat,
                 clearcoat_gloss,
             } => {
-                let mut rng = rand::thread_rng().gen_range(0.0..1.0);
+                let rng = rand::thread_rng().gen_range(0.0..1.0);
                 if rng < 0.333 {
                     uvw.local(&random_cosine_direction())
                 } else if rng < 0.666 {
