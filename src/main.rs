@@ -65,6 +65,7 @@ fn ray_color(
         //                     / pdf_value;
         //         }
         // }
+        //
         } else {
             emitted
         }
