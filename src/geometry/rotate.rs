@@ -40,9 +40,12 @@ impl<H: Hittable> Rotate<H> {
             for iter in 0..=1 {
                 for jter in 0..=1 {
                     for kter in 0..=1 {
-                        let r = kter as f64 * rbox.max[r_axis] + (1 - kter) as f64 * rbox.min[r_axis];
-                        let a = iter as f64 * rbox.max[a_axis] + (1 - iter) as f64 * rbox.min[a_axis];
-                        let b = jter as f64 * rbox.max[b_axis] + (1 - jter) as f64 * rbox.min[b_axis];
+                        let r =
+                            kter as f64 * rbox.max[r_axis] + (1 - kter) as f64 * rbox.min[r_axis];
+                        let a =
+                            iter as f64 * rbox.max[a_axis] + (1 - iter) as f64 * rbox.min[a_axis];
+                        let b =
+                            jter as f64 * rbox.max[b_axis] + (1 - jter) as f64 * rbox.min[b_axis];
 
                         let new_a = cos_theta * a + sin_theta * b;
                         let new_b = -sin_theta * a + cos_theta * b;
@@ -90,12 +93,12 @@ impl<H: Hittable> Hittable for Rotate<H> {
         self.hittable.hit(&rotate_ray, t_min, t_max).map(|mut hit| {
             let mut position = hit.p;
             let mut normal = hit.normal;
-            position[a_axis] = &self.cos_theta * hit.p[a_axis] - &self.sin_theta * hit.p[b_axis];
-            position[b_axis] = &self.sin_theta * hit.p[a_axis] + &self.cos_theta * hit.p[b_axis];
+            position[a_axis] = &self.cos_theta * hit.p[a_axis] + &self.sin_theta * hit.p[b_axis];
+            position[b_axis] = -&self.sin_theta * hit.p[a_axis] + &self.cos_theta * hit.p[b_axis];
             normal[a_axis] =
-                &self.cos_theta * hit.normal[a_axis] - &self.sin_theta * hit.normal[b_axis];
+                &self.cos_theta * hit.normal[a_axis] + &self.sin_theta * hit.normal[b_axis];
             normal[b_axis] =
-                &self.sin_theta * hit.normal[a_axis] + &self.cos_theta * hit.normal[b_axis];
+                -&self.sin_theta * hit.normal[a_axis] + &self.cos_theta * hit.normal[b_axis];
 
             hit.p = position;
             hit.set_face_normal(&rotate_ray, normal);

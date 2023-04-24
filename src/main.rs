@@ -170,7 +170,7 @@ fn cornell_box() -> (Box<dyn Hittable>, Box<dyn Hittable>) {
         0.0,
         555.0,
         555.0,
-        m_white,
+        m_metal,
     ));
     world.add(AARect::new(
         Plane::XY,
@@ -192,18 +192,19 @@ fn cornell_box() -> (Box<dyn Hittable>, Box<dyn Hittable>) {
         m_lemon_yellow,
     ));
 
-    // world.add(Translate::new(
-    //     Rotate::new(
-    //         RotateAxis::Y,
-    //         Cube::new(
-    //             Point::new(0.0, 0.0, 0.0),
-    //             Point::new(165.0, 165.0, 165.0),
-    //             m_light,
-    //         ),
-    //         -18.0,
-    //     ),
-    //     Vector3::new(130.0, 0.0, 65.0),
-    // ));
+    world.add(Translate::new(
+        Rotate::new(
+            RotateAxis::Y,
+            Cube::new(
+                Point::new(0.0, 0.0, 0.0),
+                Point::new(165.0, 165.0, 165.0),
+                m_white,
+            ),
+            -18.0,
+        ),
+        Vector3::new(130.0, 0.0, 65.0),
+    ));
+
     world.add(Translate::new(
         Rotate::new(
             RotateAxis::Y,
@@ -216,7 +217,6 @@ fn cornell_box() -> (Box<dyn Hittable>, Box<dyn Hittable>) {
         ),
         Vector3::new(265.0, 0.0, 295.0),
     ));
-    world.add(Sphere::new(Point::new(88.0, 165.0, 88.0), 80.0, m_metal));
 
     lights.add(rect_light);
 
@@ -227,7 +227,7 @@ fn main() {
     const ASPECT_RATIO: f64 = 1.0;
     const IMAGE_WIDTH: u32 = 500;
     const IMAGE_HEIGHT: u32 = ((IMAGE_WIDTH as f64) / ASPECT_RATIO) as u32;
-    const SAMPLES_PER_PIXEL: u64 = 100;
+    const SAMPLES_PER_PIXEL: u64 = 1000;
     const MAX_DEPTH: u64 = 100;
 
     // scene
@@ -258,7 +258,7 @@ fn main() {
         }
         Scene::CornellBox => {
             let (world, lights) = cornell_box();
-            let backgournd = Color::new(0.3, 0.3, 0.3);
+            let backgournd = Color::new(0.0, 0.0, 0.0);
 
             let lookfrom = Point::new(278.0, 278.0, -800.0);
             let lookat = Point::new(278.0, 278.0, 0.0);
