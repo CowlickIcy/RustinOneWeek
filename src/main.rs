@@ -170,7 +170,7 @@ fn cornell_box() -> (Box<dyn Hittable>, Box<dyn Hittable>) {
         0.0,
         555.0,
         555.0,
-        m_metal,
+        m_white.clone(),
     ));
     world.add(AARect::new(
         Plane::XY,
